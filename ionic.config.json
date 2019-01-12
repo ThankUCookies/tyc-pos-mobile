@@ -1,5 +1,7 @@
 {
   "name": "tyc-pos-mobile",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

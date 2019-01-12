@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormControl,
-  Validators
-} from '@angular/forms';
-import { HttpService } from '../components/services/http.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { ToastController } from '@ionic/angular';
+import { HttpErrorResponse } from '@angular/common/http';
+
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,9 +14,13 @@ export class LoginPage implements OnInit {
   loginFormBuilder: FormBuilder;
   loginFormGroup: FormGroup;
 
-  constructor(private httpService: HttpService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastCtrl: ToastController
+  ) {}
 
-  ngOnInit() {
+  public ngOnInit() {
     this.loginFormBuilder = new FormBuilder();
     this.loginFormGroup = this.loginFormBuilder.group({
       userName: ['', [Validators.required, Validators.email]],
@@ -25,14 +28,33 @@ export class LoginPage implements OnInit {
     });
   }
 
-  onBtnLoginClick() {
-    this.httpService
-      .post('auth/login', {
-        userName: this.loginFormGroup.get('userName').value,
-        password: this.loginFormGroup.get('password').value
+  public onBtnLoginClick() {
+    const userName: string = this.loginFormGroup.get('userName').value;
+    const password: string = this.loginFormGroup.get('password').value;
+
+    this.authService
+      .authenticate(userName, password)
+      .then(() => {
+        this.router.navigate(['/scan-barcode']);
       })
-      .subscribe((res) => {
-        console.log(res);
+      .catch(async (err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          const toast = await this.toastCtrl.create({
+            animated: true,
+            message: 'Your username or password is incorrect!',
+            duration: 3000
+          });
+
+          toast.present();
+        } else {
+          const toast = await this.toastCtrl.create({
+            animated: true,
+            message: 'Something went wrong, please try again later!',
+            duration: 3000
+          });
+
+          toast.present();
+        }
       });
   }
 }

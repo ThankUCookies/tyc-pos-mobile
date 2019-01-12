@@ -1,0 +1,9 @@
+diff a/src/app/app.module.ts b/src/app/app.module.ts	(rejected hunks)
+@@ -17 +17,6 @@ import { HttpClientModule } from '@angular/common/http';
+-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
++  imports: [
++    BrowserModule,
++    IonicModule.forRoot(),
++    AppRoutingModule,
++    HttpClientModule
++  ],

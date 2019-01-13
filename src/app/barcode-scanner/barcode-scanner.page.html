@@ -1,1 +1,14 @@
-<ion-content padding> <p>Barcode Scanning page!</p> </ion-content>
+<ion-content padding (click)="onContentClick($event)">
+  <ion-grid>
+    <ion-row *ngIf="barcodes.length == 0">
+      <ion-col> <p text-center>Click anywhere to scan a barcode!</p> </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let barcode of barcodes"> {{ barcode }} </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

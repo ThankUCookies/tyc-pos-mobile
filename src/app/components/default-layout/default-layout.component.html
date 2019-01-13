@@ -1,3 +1,12 @@
-<ion-header>
-  <ion-toolbar> <ion-title> Thank You Cookies </ion-title> </ion-toolbar>
+<ion-header translucent>
+  <ion-toolbar color="primary">
+    <ion-title float-left>Thank You Cookies</ion-title>
+    <ion-title
+      *ngIf="isLoggedIn"
+      (click)="onBtnLogoutClick($event)"
+      float-right
+    >
+      <ion-icon name="log-out"></ion-icon>
+    </ion-title>
+  </ion-toolbar>
 </ion-header>

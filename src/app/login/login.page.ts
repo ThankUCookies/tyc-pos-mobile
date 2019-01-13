@@ -35,6 +35,7 @@ export class LoginPage implements OnInit {
     this.authService
       .authenticate(userName, password)
       .then(() => {
+        this.loginFormGroup.reset();
         this.router.navigate(['/scan-barcode']);
       })
       .catch(async (err: HttpErrorResponse) => {

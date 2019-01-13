@@ -1,5 +1,5 @@
 import { HttpService } from './http.service';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { TokenService } from './token.service';
 
@@ -7,11 +7,15 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthService {
+  private authStatusEmitter: EventEmitter<boolean>;
+
   constructor(
     private httpService: HttpService,
     private tokenService: TokenService,
     private jwtHelperService: JwtHelperService
-  ) {}
+  ) {
+    this.authStatusEmitter = new EventEmitter<boolean>();
+  }
 
   public authenticate(userName: string, password: string) {
     return new Promise((resolve, reject) => {
@@ -21,6 +25,7 @@ export class AuthService {
         .then((res: any) => {
           this.tokenService.setToken(res.token);
 
+          this.authStatusEmitter.emit(true);
           resolve(true);
         })
         .catch((err) => {
@@ -45,7 +50,12 @@ export class AuthService {
     }
   }
 
+  public onAuthStatusChange() {
+    return this.authStatusEmitter;
+  }
+
   public logout() {
     this.tokenService.removeToken();
+    this.authStatusEmitter.emit(false);
   }
 }

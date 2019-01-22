@@ -23,17 +23,15 @@ export class LoginPage implements OnInit {
   public ngOnInit() {
     this.loginFormBuilder = new FormBuilder();
     this.loginFormGroup = this.loginFormBuilder.group({
-      userName: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      userName: ['', [Validators.required]]
     });
   }
 
   public onBtnLoginClick() {
     const userName: string = this.loginFormGroup.get('userName').value;
-    const password: string = this.loginFormGroup.get('password').value;
 
     this.authService
-      .authenticate(userName, password)
+      .authenticate(userName)
       .then(() => {
         this.loginFormGroup.reset();
         this.router.navigate(['/scan-barcode']);
@@ -42,11 +40,12 @@ export class LoginPage implements OnInit {
         if (err.status === 401) {
           const toast = await this.toastCtrl.create({
             animated: true,
-            message: 'Your username or password is incorrect!',
+            message: 'Your username incorrect!',
             duration: 3000
           });
 
           toast.present();
+          this.loginFormGroup.reset();
         } else {
           const toast = await this.toastCtrl.create({
             animated: true,

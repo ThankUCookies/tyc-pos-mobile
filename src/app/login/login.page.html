@@ -16,30 +16,6 @@
           >
             This field is required
           </div>
-          <div
-            *ngIf="loginFormGroup.controls.userName.dirty && loginFormGroup.hasError('email', 'userName')"
-            class="error"
-          >
-            Invalid email address
-          </div>
-        </ion-col>
-      </ion-row>
-
-      <ion-row>
-        <ion-col>
-          <ion-item>
-            <ion-input
-              formControlName="password"
-              type="password"
-              placeholder="Password"
-            ></ion-input>
-          </ion-item>
-          <div
-            *ngIf="loginFormGroup.controls.password.dirty && loginFormGroup.hasError('required', 'password')"
-            class="error"
-          >
-            This field is required
-          </div>
         </ion-col>
       </ion-row>
 

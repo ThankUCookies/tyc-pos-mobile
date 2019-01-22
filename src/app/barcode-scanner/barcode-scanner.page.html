@@ -1,13 +1,21 @@
-<ion-content padding (click)="onContentClick($event)">
+<ion-content padding>
   <ion-grid>
-    <ion-row *ngIf="barcodes.length == 0">
-      <ion-col> <p text-center>Click anywhere to scan a barcode!</p> </ion-col>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Transaction Type</ion-label>
+          <ion-select interface="popover">
+            <ion-select-option value="in">IN</ion-select-option>
+            <ion-select-option value="out">OUT</ion-select-option>
+            <ion-select-option value="warehouse">Warehouse</ion-select-option>
+            <ion-select-option value="sale">Sale</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-list>
-          <ion-item *ngFor="let barcode of barcodes"> {{ barcode }} </ion-item>
-        </ion-list>
+        <ion-textarea #barcodes placeholder="Barcodes..."></ion-textarea>
       </ion-col>
     </ion-row>
   </ion-grid>

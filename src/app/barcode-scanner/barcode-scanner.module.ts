@@ -5,11 +5,8 @@ import { BarcodeScannerRoutingModule } from './barcode-routing.module';
 
 import { BarcodeScannerPage } from './barcode-scanner.page';
 
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-
 @NgModule({
   imports: [CommonModule, IonicModule, BarcodeScannerRoutingModule],
-  declarations: [BarcodeScannerPage],
-  providers: [BarcodeScanner]
+  declarations: [BarcodeScannerPage]
 })
 export class BarcodeScannerModule {}

@@ -17,10 +17,10 @@ export class AuthService {
     this.authStatusEmitter = new EventEmitter<boolean>();
   }
 
-  public authenticate(userName: string, password: string) {
+  public authenticate(userName: string) {
     return new Promise((resolve, reject) => {
       this.httpService
-        .post('auth/login', { userName, password })
+        .post('auth/login', { userName })
         .toPromise()
         .then((res: any) => {
           this.tokenService.setToken(res.token);

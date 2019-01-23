@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./default-layout.component.scss']
 })
 export class DefaultLayoutComponent {
-  private isLoggedIn: boolean;
+  public isLoggedIn: boolean;
 
   constructor(public authService: AuthService, private router: Router) {
     this.authService.onAuthStatusChange().subscribe((loggedIn) => {

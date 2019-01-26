@@ -4,11 +4,13 @@
       <ion-col>
         <ion-item>
           <ion-label>Transaction Type</ion-label>
-          <ion-select interface="popover">
-            <ion-select-option value="in">IN</ion-select-option>
-            <ion-select-option value="out">OUT</ion-select-option>
-            <ion-select-option value="warehouse">Warehouse</ion-select-option>
-            <ion-select-option value="sale">Sale</ion-select-option>
+          <ion-select id="transaction-types" interface="popover">
+            <ion-select-option
+              class="transaction-type"
+              *ngFor="let transactionType of transactionTypes"
+              [value]="transactionType.value"
+              >{{transactionType.name}}</ion-select-option
+            >
           </ion-select>
         </ion-item>
       </ion-col>

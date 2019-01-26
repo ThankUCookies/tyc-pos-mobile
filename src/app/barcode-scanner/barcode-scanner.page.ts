@@ -1,25 +1,51 @@
-import { Component, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  OnInit,
+  Inject,
+  AfterContentInit
+} from '@angular/core';
 
 import { IonTextarea } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import {
+  HttpServiceToken,
+  IHttpService
+} from '../services/contracts/http.service';
 
 @Component({
   templateUrl: './barcode-scanner.page.html'
 })
-export class BarcodeScannerPage implements AfterViewInit, OnDestroy {
+export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
   @ViewChild('barcodes')
   barcodes: IonTextarea;
-  focsObservable: Subscription;
+  focusObservable: Subscription;
+  transactionTypes: any;
+  private httpService: IHttpService;
 
-  ngAfterViewInit() {
-    this.barcodes.setFocus();
+  constructor(@Inject(HttpServiceToken) httpService) {
+    this.httpService = httpService;
+  }
 
-    this.focsObservable = this.barcodes.ionBlur.subscribe(() => {
+  ngOnInit() {
+    this.httpService.get('transactions/types').subscribe((response) => {
+      if (!response.error) {
+        this.transactionTypes = response.types;
+      }
+    });
+  }
+
+  ngAfterContentInit() {
+    this.barcodes.autofocus = true;
+
+    this.focusObservable = this.barcodes.ionBlur.subscribe(() => {
       this.barcodes.setFocus();
     });
   }
 
   ngOnDestroy() {
-    this.focsObservable.unsubscribe();
+    this.focusObservable.unsubscribe();
   }
 }

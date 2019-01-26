@@ -1,19 +1,21 @@
-import { HttpService } from './http.service';
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter, Inject } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { TokenService } from './token.service';
+import { IHttpService, HttpServiceToken } from '../contracts/http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private authStatusEmitter: EventEmitter<boolean>;
+  private httpService: IHttpService;
 
   constructor(
-    private httpService: HttpService,
+    @Inject(HttpServiceToken) httpService,
     private tokenService: TokenService,
     private jwtHelperService: JwtHelperService
   ) {
+    this.httpService = httpService;
     this.authStatusEmitter = new EventEmitter<boolean>();
   }
 

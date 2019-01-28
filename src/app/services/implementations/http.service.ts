@@ -3,10 +3,15 @@ import { environment } from '../../../environments/environment';
 import { IHttpService } from '../contracts/http.service';
 import { Inject } from '@angular/core';
 
+import { TokenService } from './token.service';
+
 export class HttpService implements IHttpService {
   private httpClient: HttpClient;
 
-  constructor(@Inject(HttpClient) httpClient) {
+  constructor(
+    @Inject(HttpClient) httpClient,
+    private tokenService: TokenService
+  ) {
     this.httpClient = httpClient;
   }
 
@@ -14,23 +19,25 @@ export class HttpService implements IHttpService {
     return `${environment.serverUrl}/${url}`;
   }
 
-  private getHeaders() {
-    const headers = new HttpHeaders();
+  private async getHeaders() {
+    let headers = new HttpHeaders();
 
-    headers.append('Content-Type', 'application/json');
+    headers = headers
+      .append('Content-Type', 'application/json')
+      .append('Authorization', `Bearer ${await this.tokenService.getToken()}`);
 
     return headers;
   }
 
-  public post(url: string, body: any) {
+  public async post(url: string, body: any) {
     return this.httpClient.post(this.getUrl(url), body, {
-      headers: this.getHeaders()
+      headers: await this.getHeaders()
     });
   }
 
-  public get(url: string) {
+  public async get(url: string) {
     return this.httpClient.get(this.getUrl(url), {
-      headers: this.getHeaders()
+      headers: await this.getHeaders()
     });
   }
 }

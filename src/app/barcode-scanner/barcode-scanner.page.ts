@@ -1,7 +1,6 @@
 import {
   Component,
   ViewChild,
-  AfterViewInit,
   OnDestroy,
   OnInit,
   Inject,
@@ -14,6 +13,7 @@ import {
   HttpServiceToken,
   IHttpService
 } from '../services/contracts/http.service';
+import { TransactionType } from '../models/transaction-type';
 
 @Component({
   templateUrl: './barcode-scanner.page.html'
@@ -22,15 +22,15 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
   @ViewChild('barcodes')
   barcodes: IonTextarea;
   focusObservable: Subscription;
-  transactionTypes: any;
+  transactionTypes: Array<TransactionType>;
   private httpService: IHttpService;
 
   constructor(@Inject(HttpServiceToken) httpService) {
     this.httpService = httpService;
   }
 
-  ngOnInit() {
-    this.httpService.get('transactions/types').subscribe((response) => {
+  async ngOnInit() {
+    (await this.httpService.get('transactions/types')).subscribe((response) => {
       if (!response.error) {
         this.transactionTypes = response.types;
       }

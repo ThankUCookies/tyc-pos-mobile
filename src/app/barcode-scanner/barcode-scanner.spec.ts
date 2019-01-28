@@ -30,8 +30,11 @@ describe('Barcode Scanner Page', () => {
   }));
 
   describe('Transaction types', () => {
-    it('should render the transaction types properly', () => {
+    it('should render the transaction types properly', async () => {
+      await fixture.componentInstance.ngOnInit();
+
       fixture.detectChanges();
+
       const transactionTypesSelect = fixture.debugElement.query(
         By.css('#transaction-types')
       );
@@ -43,7 +46,7 @@ describe('Barcode Scanner Page', () => {
       transactionTypesOption.forEach((transactionTypeOption, index) => {
         expect(
           transactionTypeOption.nativeElement.getAttribute('ng-reflect-value')
-        ).toBe(TRANSACTION_TYPES[index].value);
+        ).toBe(TRANSACTION_TYPES[index].id);
         expect(transactionTypeOption.nativeElement.innerText).toBe(
           TRANSACTION_TYPES[index].name
         );

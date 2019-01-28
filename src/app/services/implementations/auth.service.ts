@@ -20,9 +20,8 @@ export class AuthService {
   }
 
   public authenticate(userName: string) {
-    return new Promise((resolve, reject) => {
-      this.httpService
-        .post('auth/login', { userName })
+    return new Promise(async (resolve, reject) => {
+      (await this.httpService.post('auth/login', { userName }))
         .toPromise()
         .then((res: any) => {
           this.tokenService.setToken(res.token);

@@ -1,5 +1,5 @@
 export const TRANSACTION_TYPES = [
-  { name: 'IN', value: 'in' },
-  { name: 'OUT', value: 'out' },
-  { name: 'SALE', value: 'sale' }
+  { name: 'IN', id: '1' },
+  { name: 'OUT', id: '2' },
+  { name: 'SALE', id: '3' }
 ];

@@ -8,7 +8,7 @@
             <ion-select-option
               class="transaction-type"
               *ngFor="let transactionType of transactionTypes"
-              [value]="transactionType.value"
+              [value]="transactionType.id"
               >{{transactionType.name}}</ion-select-option
             >
           </ion-select>

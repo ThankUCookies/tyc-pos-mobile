@@ -1,17 +1,19 @@
 <ion-content padding>
   <ion-grid>
-    <form *ngIf="loginFormGroup" [formGroup]="loginFormGroup">
+    <form [formGroup]="loginFormGroup">
       <ion-row>
         <ion-col>
           <ion-item>
             <ion-input
+              #username
+              (keypress)="onKeyPress($event)"
               formControlName="userName"
               type="text"
               placeholder="Username"
             ></ion-input>
           </ion-item>
           <div
-            *ngIf="loginFormGroup.controls.userName.dirty && loginFormGroup.hasError('required', 'userName')"
+            *ngIf="loginFormGroup.controls.userName.dirty && loginFormGroup.hasError('required', ['userName'])"
             class="error"
           >
             This field is required
@@ -25,7 +27,7 @@
             [disabled]="loginFormGroup.invalid"
             color="primary"
             expand="block"
-            (click)="onBtnLoginClick($event)"
+            (click)="onBtnLoginClick()"
             >Login</ion-button
           >
         </ion-col>

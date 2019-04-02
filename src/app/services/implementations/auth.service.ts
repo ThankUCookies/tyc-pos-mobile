@@ -55,8 +55,8 @@ export class AuthService {
     return this.authStatusEmitter;
   }
 
-  public logout() {
-    this.tokenService.removeToken();
+  public async logout() {
+    await this.tokenService.removeToken();
     this.authStatusEmitter.emit(false);
   }
 }

@@ -19,3 +19,14 @@ ion-router-outlet {
   font-size: small;
   margin-top: 10px;
 }
+
+select {
+  padding: 10px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 10px;
+  background: darkgrey;
+  color: white;
+  outline: none;
+}

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/implementations/auth.service';
-import { ToastController } from '@ionic/angular';
+import { ToastController, IonInput } from '@ionic/angular';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 export class LoginPage implements OnInit {
   loginFormBuilder: FormBuilder;
   loginFormGroup: FormGroup;
+  focusObservable: Observable<any>;
 
   constructor(
     private authService: AuthService,
@@ -56,5 +58,13 @@ export class LoginPage implements OnInit {
           toast.present();
         }
       });
+  }
+
+  onKeyPress(evt) {
+    if(evt.keyCode == 13) {
+      if(this.loginFormGroup.valid) {
+        this.onBtnLoginClick();
+      }
+    }
   }
 }

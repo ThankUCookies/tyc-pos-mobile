@@ -3,21 +3,55 @@
     <ion-row>
       <ion-col>
         <ion-item>
-          <ion-label>Transaction Type</ion-label>
-          <ion-select id="transaction-types" interface="popover">
-            <ion-select-option
+          <ion-label for="transaction-types">Transaction Type</ion-label>
+          <select
+            #transactionTypesSelect
+            id="transaction-types"
+            interface="popover"
+          >
+            <option
               class="transaction-type"
-              *ngFor="let transactionType of transactionTypes"
+              *ngFor="let transactionType of transactionTypes; let i = index"
               [value]="transactionType.id"
-              >{{transactionType.name}}</ion-select-option
+              [selected]="transactionType.name == 'SALE'"
+              >{{transactionType.name}}</option
             >
-          </ion-select>
+          </select>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ion-textarea #barcodes placeholder="Barcodes..."></ion-textarea>
+        <ion-item>
+          <ion-label>Event</ion-label>
+          <select #eventsSelect id="events" interface="popover">
+            <option
+              class="event"
+              *ngFor="let event of events; let i = index"
+              [value]="event.id"
+              [selected]="event.name == 'Internal'"
+              >{{event.name}}</option
+            >
+          </select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col *ngIf="currentTransactionId" text-center
+        ><ion-badge color="success"
+          >Current Transaction: {{ currentTransactionId }}</ion-badge
+        ></ion-col
+      >
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-textarea
+          rows="20"
+          #skuCodes
+          (keypress)="onKeyPress($event)"
+          #barcodes
+          placeholder="Barcodes..."
+        ></ion-textarea>
       </ion-col>
     </ion-row>
   </ion-grid>

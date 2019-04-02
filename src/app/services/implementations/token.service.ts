@@ -17,7 +17,7 @@ export class TokenService {
     return this.storage.get(this.tokenKey);
   }
 
-  public removeToken() {
-    this.storage.remove(this.tokenKey);
+  public async removeToken() {
+    await this.storage.remove(this.tokenKey);
   }
 }

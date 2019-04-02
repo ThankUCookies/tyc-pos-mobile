@@ -11,13 +11,17 @@ export class DefaultLayoutComponent {
   public isLoggedIn: boolean;
 
   constructor(public authService: AuthService, private router: Router) {
+    this.authService.isLoggedIn().then(isLoggedIn => {
+      this.isLoggedIn = isLoggedIn;
+    });
     this.authService.onAuthStatusChange().subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn;
     });
   }
 
   public onBtnLogoutClick() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout().then(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }

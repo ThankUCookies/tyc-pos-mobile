@@ -11,7 +11,7 @@ export class DefaultLayoutComponent {
   public isLoggedIn: boolean;
 
   constructor(public authService: AuthService, private router: Router) {
-    this.authService.isLoggedIn().then(isLoggedIn => {
+    this.authService.isLoggedIn().then((isLoggedIn) => {
       this.isLoggedIn = isLoggedIn;
     });
     this.authService.onAuthStatusChange().subscribe((loggedIn) => {

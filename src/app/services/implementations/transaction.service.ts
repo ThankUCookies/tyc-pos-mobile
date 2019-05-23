@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpService } from './http.service';
 import { HttpServiceToken } from '../contracts/http.service';
+import { Network } from '@ionic-native/network/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,8 @@ export class TransactionService {
   }
 
   public addSku(transactionId: string, skuCode: string) {
-    return this.httpService.post(`transactions/${transactionId}/add-sku`, { skuCode: skuCode })
+    return this.httpService.post(`transactions/${transactionId}/add-sku`, {
+      skuCode: skuCode
+    });
   }
 }

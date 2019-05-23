@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  serverUrl: 'http://localhost:3000',
+  serverUrl: 'http://tyc-staging-env.ap-south-1.elasticbeanstalk.com',
   localDbName: 'tyc-db'
 };
 

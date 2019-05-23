@@ -54,5 +54,18 @@
         ></ion-textarea>
       </ion-col>
     </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button
+          (click)="onOfflineTransactionsClick()"
+          color="primary"
+          expand="block"
+          >Total Offline Transactions</ion-button
+        >
+        <ion-button (click)="onBtnSyncClick()" color="primary" expand="block"
+          >Sync Offline Transactions</ion-button
+        >
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/implementations/auth.service';
 import { ToastController, IonInput } from '@ionic/angular';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -19,7 +20,8 @@ export class LoginPage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private tts: TextToSpeech
   ) {}
 
   public ngOnInit() {
@@ -40,29 +42,29 @@ export class LoginPage implements OnInit {
       })
       .catch(async (err: HttpErrorResponse) => {
         if (err.status === 401) {
-          const toast = await this.toastCtrl.create({
-            animated: true,
-            message: 'Your username incorrect!',
-            duration: 3000
-          });
+          this.showToast('Your username incorrect!');
 
-          toast.present();
           this.loginFormGroup.reset();
         } else {
-          const toast = await this.toastCtrl.create({
-            animated: true,
-            message: 'Something went wrong, please try again later!',
-            duration: 3000
-          });
-
-          toast.present();
+          this.showToast('Something went wrong, please try again later!');
         }
       });
   }
 
+  private async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      animated: true,
+      message: message,
+      duration: 1000
+    });
+    toast.present();
+    this.tts.stop();
+    this.tts.speak(message);
+  }
+
   onKeyPress(evt) {
-    if(evt.keyCode == 13) {
-      if(this.loginFormGroup.valid) {
+    if (evt.keyCode == 13) {
+      if (this.loginFormGroup.valid) {
         this.onBtnLoginClick();
       }
     }

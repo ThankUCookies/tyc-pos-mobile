@@ -19,6 +19,8 @@ import { environment } from 'src/environments/environment';
 
 import { HttpServiceToken } from './services/contracts/http.service';
 import { HttpService } from './services/implementations/http.service';
+import { Network } from '@ionic-native/network/ngx';
+import { TextToSpeech } from '@ionic-native/text-to-speech/ngx';
 
 export function jwtOptionsFactory(tokenService: TokenService) {
   return {
@@ -52,6 +54,8 @@ export function jwtOptionsFactory(tokenService: TokenService) {
       provide: HttpServiceToken,
       useClass: HttpService
     },
+    Network,
+    TextToSpeech,
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

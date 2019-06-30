@@ -30,4 +30,12 @@ export class TransactionService {
       skuCode: skuCode
     });
   }
+
+  public addSkus(eventId: string, typeId: string, skuCodes: string[]) {
+    return this.httpService.post(`transactions/add-skus`, {
+      eventId,
+      typeId,
+      skuCodes
+    });
+  }
 }

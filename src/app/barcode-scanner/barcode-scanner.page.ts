@@ -36,6 +36,8 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
   currentTransactionIdKey: string;
   isOnline: boolean = true;
   totalOfflineEntries: number = 0;
+  currentSkus;
+  localStorage = [];
 
   constructor(
     private transactionService: TransactionService,
@@ -44,6 +46,11 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
     private networkService: Network,
     private tts: TextToSpeech
   ) {
+
+
+    this.currentSkus = {
+      transactions: []
+    };
     this.currentTransactionIdKey = 'currentTransactionId';
 
     this.storage.get('transactions').then(totalOfflineEntries => {
@@ -85,9 +92,6 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
       this.storage.get('events').then(events => {
         this.events = events;
       });     
-    this.currentTransactionId = await this.storage.get(
-      this.currentTransactionIdKey
-    );
   }
 
   ngAfterContentInit() {
@@ -99,88 +103,61 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
   }
 
   async onKeyPress(evt) {
+    
     if (evt.keyCode == 13) {
       const skuCode = this.getLastSkuCode();
       if (skuCode) {
         if (skuCode.startsWith('AAA0000')) {
           this.skuCodes.value = '';
-          await this.storage.remove(this.currentTransactionIdKey);
-          this.currentTransactionId = null;
           this.showToast('The transaction was completed');
 
-          if(!this.isOnline) {
-            const offlineEntries = await this.storage.get('transactions') || [];
-            offlineEntries.push({
-              skuCode
-            });
-            await this.storage.set('transactions', offlineEntries);
-          }
+          this.currentSkus.eventId = this.eventsSelect.nativeElement.value;
+          this.currentSkus.typeId = this.transactionTypesSelect.nativeElement.value;
+          this.currentSkus.status = 'WAITING';         
+        
+          const offlineEntries = await this.storage.get('transactions') || [];
+          offlineEntries.push({
+            eventId: this.currentSkus.eventId,
+            typeId: this.currentSkus.typeId,
+            transactions: this.currentSkus.transactions,
+            status: 'WAITING'
+          });
+          await this.storage.set('transactions', offlineEntries);
+          
+          this.localStorage.push({
+            eventId: this.currentSkus.eventId,
+            typeId: this.currentSkus.typeId,
+            transactions: this.currentSkus.transactions,
+            status: 'WAITING'
+          });
+
+          this.currentSkus = {
+            transactions: []
+          };
 
           return;
         }
 
-        if (!(await this.storage.get(this.currentTransactionIdKey))) {
-          try {
-            if (!this.eventsSelect.nativeElement.value) {
-              this.showToast('Please select an event first');
-              return;
-            }
-
-            this.skuCodes.readonly = true;
-
-            if(this.isOnline) {
-              const response: any = await (await this.transactionService.createTransaction(
-                this.eventsSelect.nativeElement.value,
-                this.transactionTypesSelect.nativeElement.value
-              )).toPromise();
-
-              await this.storage.set(this.currentTransactionIdKey, response.id);
-              this.currentTransactionId = response.id;
-            }
-            
-            this.skuCodes.readonly = false;
-          } catch (e) {
-            this.showToast(`Unable to create a new transaction`);
-
-            return;
-          }
+        if (!this.eventsSelect.nativeElement.value) {
+          this.showToast('Please select an event first');
+          return;
         }
 
         this.skuCodes.readonly = true;
-        const currentTransaction = await this.storage.get(
-          this.currentTransactionIdKey
-        );
-
-        try {
-          if(this.isOnline) {
-            await (await this.transactionService.addSku(
-              currentTransaction,
-              skuCode
-            )).toPromise();
-          }
-          else {
-            const offlineEntries = await this.storage.get('transactions') || [];
-            offlineEntries.push({
-              skuCode,
-              event: this.eventsSelect.nativeElement.value,
-              type: this.transactionTypesSelect.nativeElement.value,
-              status: 'WAITING'
-            });
-            await this.storage.set('transactions', offlineEntries);
-          }
-         
-          this.skuCodes.readonly = false;
-        } catch (e) {
-          this.showToast(`Unable to add a sku entry`);
-
-          return;
-        }
+        
+        this.currentSkus.transactions.push(skuCode);
+        
+        this.skuCodes.readonly = false;
 
         this.showToast('The item was scanned');
       }
 
+
       this.storage.get('transactions').then(totalOfflineEntries => {
-        this.totalOfflineEntries = totalOfflineEntries.length;
+        if(totalOfflineEntries)
+        {
+          this.totalOfflineEntries = totalOfflineEntries.length;
+        }
       });
     }
   }
@@ -214,49 +191,23 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
 
       return;
     }
-    const transactions = await this.storage.get('transactions') || [];
+    const scans = await this.storage.get('transactions') || this.localStorage || [];
     const failedTransactions = [];
 
-    for(let i = 0; i < transactions.length; i++) {
-      const skuCode = transactions[i].skuCode;
-      if (skuCode) {
-        if (skuCode.startsWith('AAA0000')) {
-          await this.storage.remove(this.currentTransactionIdKey);
-        }
-        else {
-          if (!(await this.storage.get(this.currentTransactionIdKey)) && !transactions[i].transactionId) {
-            try {
-                const response: any = await (await this.transactionService.createTransaction(
-                  transactions[i].event,
-                  transactions[i].type
-                )).toPromise();
-    
-                await this.storage.set(this.currentTransactionIdKey, response.id);
-              } catch (e) {
-                this.showToast(`Unable to create a new transaction`);
-                failedTransactions.push({ ...transactions[i], status: 'FAILED'});
-    
-                return;
-              }
-          }
-  
-          const currentTransaction = await this.storage.get(
-            this.currentTransactionIdKey
-          );
-  
-          try {
-            await (await this.transactionService.addSku(
-              currentTransaction,
-              transactions[i].skuCode
-            )).toPromise();
-           
-          } catch (e) {
-            this.showToast(`Unable to add a sku entry`);
-            failedTransactions.push({ ...transactions[i], status: 'FAILED', transactionId: currentTransaction});
-  
-            return;
-          }
-        }
+    for(let i = 0; i < scans.length; i++) {
+      const skuCodes = scans[i].transactions;
+      try {
+        await (await this.transactionService.addSkus(
+          scans[i].eventId,
+          scans[i].typeId,
+          skuCodes
+        )).toPromise();
+       
+      } catch (e) {
+        this.showToast(`Unable to sync a scan`);
+        scans[i].status = 'FAILED';
+        failedTransactions.push(scans[i]);
+        return;
       }
     }
 

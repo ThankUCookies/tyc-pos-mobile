@@ -31,10 +31,11 @@ export class TransactionService {
     });
   }
 
-  public addSkus(eventId: string, typeId: string, skuCodes: string[]) {
+  public addSkus(eventId: string, typeId: string, dateTime: Date, skuCodes: string[]) {
     return this.httpService.post(`transactions/add-skus`, {
       eventId,
       typeId,
+      dateTime,
       skuCodes
     });
   }

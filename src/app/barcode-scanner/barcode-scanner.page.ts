@@ -115,17 +115,23 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
           this.currentSkus.typeId = this.transactionTypesSelect.nativeElement.value;
           this.currentSkus.status = 'WAITING';         
         
+          const today = new Date();
+          today.setHours(today.getUTCHours() + 5);
+          today.setMinutes(today.getUTCMinutes() + 30);
+
           const offlineEntries = await this.storage.get('transactions') || [];
           offlineEntries.push({
             eventId: this.currentSkus.eventId,
             typeId: this.currentSkus.typeId,
             transactions: this.currentSkus.transactions,
-            status: 'WAITING'
+            status: 'WAITING',
+            dateTime: today
           });
           await this.storage.set('transactions', offlineEntries);
           
           this.localStorage.push({
             eventId: this.currentSkus.eventId,
+            dateTime: today,
             typeId: this.currentSkus.typeId,
             transactions: this.currentSkus.transactions,
             status: 'WAITING'
@@ -191,6 +197,7 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
 
       return;
     }
+
     const scans = await this.storage.get('transactions') || this.localStorage || [];
     const failedTransactions = [];
 
@@ -200,6 +207,7 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
         await (await this.transactionService.addSkus(
           scans[i].eventId,
           scans[i].typeId,
+          scans[i].dateTime,
           skuCodes
         )).toPromise();
        

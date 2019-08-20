@@ -38,6 +38,7 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
   totalOfflineEntries: number = 0;
   currentSkus;
   localStorage = [];
+  isInSyncProcess = false;
 
   constructor(
     private transactionService: TransactionService,
@@ -197,7 +198,7 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
 
       return;
     }
-
+    this.isInSyncProcess = true;
     const scans = await this.storage.get('transactions') || this.localStorage || [];
     const failedTransactions = [];
 
@@ -222,6 +223,7 @@ export class BarcodeScannerPage implements OnInit, AfterContentInit, OnDestroy {
     await this.storage.remove('transactions');
     await this.storage.set('transactions', failedTransactions);
     this.showToast(`Sync complete`);
+    this.isInSyncProcess = false;
   }
 
   onOfflineTransactionsClick() {
